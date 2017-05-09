@@ -1,0 +1,13 @@
+#define MAIN 1
+#define PRINT 2
+#define ID 3
+#define NUM 4
+#define PARI 5
+#define PARD 6
+#define ASIGN 7
+#define PYC 8
+#define PLUSOP 9
+#define MINUSOP 10
+#define COMMA 11
+#define LLAVEI 12
+#define LLAVED 13

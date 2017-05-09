@@ -1,0 +1,5 @@
+main ()  {
+	//Ejemplo absurdo
+	_x = 54+23-2;
+	print(_x, 34+1); 
+}

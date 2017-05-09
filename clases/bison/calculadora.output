@@ -1,0 +1,415 @@
+Gramática
+
+    0 $accept: entrada $end
+
+    1 entrada: expr PYC
+    2        | expr PYC entrada
+    3        | asig PYC
+    4        | asig PYC entrada
+
+    5 asig: ID EQUAL expr
+
+    6 expr: expr MAS term
+    7     | expr MENOS term
+    8     | term
+
+    9 term: term MULT base
+   10     | term DIV base
+   11     | base
+
+   12 base: base POTENCIA fact
+   13     | fact
+
+   14 fact: PARI expr PARD
+   15     | ENT
+   16     | MENOS fact
+   17     | ID
+
+
+Terminales con las reglas donde aparecen
+
+$end (0) 0
+error (256)
+MAS (258) 6
+MENOS (259) 7 16
+MULT (260) 9
+DIV (261) 10
+PARI (262) 14
+PARD (263) 14
+PYC (264) 1 2 3 4
+POTENCIA (265) 12
+EQUAL (266) 5
+ENT (267) 15
+ID (268) 5 17
+
+
+No terminales con las reglas donde aparecen
+
+$accept (14)
+    en la izquierda: 0
+entrada (15)
+    en la izquierda: 1 2 3 4, en la derecha: 0 2 4
+asig (16)
+    en la izquierda: 5, en la derecha: 3 4
+expr (17)
+    en la izquierda: 6 7 8, en la derecha: 1 2 5 6 7 14
+term (18)
+    en la izquierda: 9 10 11, en la derecha: 6 7 8 9 10
+base (19)
+    en la izquierda: 12 13, en la derecha: 9 10 11 12
+fact (20)
+    en la izquierda: 14 15 16 17, en la derecha: 12 13 16
+
+
+Estado 0
+
+    0 $accept: . entrada $end
+
+    MENOS  desplazar e ir al estado 1
+    PARI   desplazar e ir al estado 2
+    ENT    desplazar e ir al estado 3
+    ID     desplazar e ir al estado 4
+
+    entrada  ir al estado 5
+    asig     ir al estado 6
+    expr     ir al estado 7
+    term     ir al estado 8
+    base     ir al estado 9
+    fact     ir al estado 10
+
+
+Estado 1
+
+   16 fact: MENOS . fact
+
+    MENOS  desplazar e ir al estado 1
+    PARI   desplazar e ir al estado 2
+    ENT    desplazar e ir al estado 3
+    ID     desplazar e ir al estado 11
+
+    fact  ir al estado 12
+
+
+Estado 2
+
+   14 fact: PARI . expr PARD
+
+    MENOS  desplazar e ir al estado 1
+    PARI   desplazar e ir al estado 2
+    ENT    desplazar e ir al estado 3
+    ID     desplazar e ir al estado 11
+
+    expr  ir al estado 13
+    term  ir al estado 8
+    base  ir al estado 9
+    fact  ir al estado 10
+
+
+Estado 3
+
+   15 fact: ENT .
+
+    $default  reduce usando la regla 15 (fact)
+
+
+Estado 4
+
+    5 asig: ID . EQUAL expr
+   17 fact: ID .
+
+    EQUAL  desplazar e ir al estado 14
+
+    $default  reduce usando la regla 17 (fact)
+
+
+Estado 5
+
+    0 $accept: entrada . $end
+
+    $end  desplazar e ir al estado 15
+
+
+Estado 6
+
+    3 entrada: asig . PYC
+    4        | asig . PYC entrada
+
+    PYC  desplazar e ir al estado 16
+
+
+Estado 7
+
+    1 entrada: expr . PYC
+    2        | expr . PYC entrada
+    6 expr: expr . MAS term
+    7     | expr . MENOS term
+
+    MAS    desplazar e ir al estado 17
+    MENOS  desplazar e ir al estado 18
+    PYC    desplazar e ir al estado 19
+
+
+Estado 8
+
+    8 expr: term .
+    9 term: term . MULT base
+   10     | term . DIV base
+
+    MULT  desplazar e ir al estado 20
+    DIV   desplazar e ir al estado 21
+
+    $default  reduce usando la regla 8 (expr)
+
+
+Estado 9
+
+   11 term: base .
+   12 base: base . POTENCIA fact
+
+    POTENCIA  desplazar e ir al estado 22
+
+    $default  reduce usando la regla 11 (term)
+
+
+Estado 10
+
+   13 base: fact .
+
+    $default  reduce usando la regla 13 (base)
+
+
+Estado 11
+
+   17 fact: ID .
+
+    $default  reduce usando la regla 17 (fact)
+
+
+Estado 12
+
+   16 fact: MENOS fact .
+
+    $default  reduce usando la regla 16 (fact)
+
+
+Estado 13
+
+    6 expr: expr . MAS term
+    7     | expr . MENOS term
+   14 fact: PARI expr . PARD
+
+    MAS    desplazar e ir al estado 17
+    MENOS  desplazar e ir al estado 18
+    PARD   desplazar e ir al estado 23
+
+
+Estado 14
+
+    5 asig: ID EQUAL . expr
+
+    MENOS  desplazar e ir al estado 1
+    PARI   desplazar e ir al estado 2
+    ENT    desplazar e ir al estado 3
+    ID     desplazar e ir al estado 11
+
+    expr  ir al estado 24
+    term  ir al estado 8
+    base  ir al estado 9
+    fact  ir al estado 10
+
+
+Estado 15
+
+    0 $accept: entrada $end .
+
+    $default  aceptar
+
+
+Estado 16
+
+    3 entrada: asig PYC .
+    4        | asig PYC . entrada
+
+    MENOS  desplazar e ir al estado 1
+    PARI   desplazar e ir al estado 2
+    ENT    desplazar e ir al estado 3
+    ID     desplazar e ir al estado 4
+
+    $default  reduce usando la regla 3 (entrada)
+
+    entrada  ir al estado 25
+    asig     ir al estado 6
+    expr     ir al estado 7
+    term     ir al estado 8
+    base     ir al estado 9
+    fact     ir al estado 10
+
+
+Estado 17
+
+    6 expr: expr MAS . term
+
+    MENOS  desplazar e ir al estado 1
+    PARI   desplazar e ir al estado 2
+    ENT    desplazar e ir al estado 3
+    ID     desplazar e ir al estado 11
+
+    term  ir al estado 26
+    base  ir al estado 9
+    fact  ir al estado 10
+
+
+Estado 18
+
+    7 expr: expr MENOS . term
+
+    MENOS  desplazar e ir al estado 1
+    PARI   desplazar e ir al estado 2
+    ENT    desplazar e ir al estado 3
+    ID     desplazar e ir al estado 11
+
+    term  ir al estado 27
+    base  ir al estado 9
+    fact  ir al estado 10
+
+
+Estado 19
+
+    1 entrada: expr PYC .
+    2        | expr PYC . entrada
+
+    MENOS  desplazar e ir al estado 1
+    PARI   desplazar e ir al estado 2
+    ENT    desplazar e ir al estado 3
+    ID     desplazar e ir al estado 4
+
+    $default  reduce usando la regla 1 (entrada)
+
+    entrada  ir al estado 28
+    asig     ir al estado 6
+    expr     ir al estado 7
+    term     ir al estado 8
+    base     ir al estado 9
+    fact     ir al estado 10
+
+
+Estado 20
+
+    9 term: term MULT . base
+
+    MENOS  desplazar e ir al estado 1
+    PARI   desplazar e ir al estado 2
+    ENT    desplazar e ir al estado 3
+    ID     desplazar e ir al estado 11
+
+    base  ir al estado 29
+    fact  ir al estado 10
+
+
+Estado 21
+
+   10 term: term DIV . base
+
+    MENOS  desplazar e ir al estado 1
+    PARI   desplazar e ir al estado 2
+    ENT    desplazar e ir al estado 3
+    ID     desplazar e ir al estado 11
+
+    base  ir al estado 30
+    fact  ir al estado 10
+
+
+Estado 22
+
+   12 base: base POTENCIA . fact
+
+    MENOS  desplazar e ir al estado 1
+    PARI   desplazar e ir al estado 2
+    ENT    desplazar e ir al estado 3
+    ID     desplazar e ir al estado 11
+
+    fact  ir al estado 31
+
+
+Estado 23
+
+   14 fact: PARI expr PARD .
+
+    $default  reduce usando la regla 14 (fact)
+
+
+Estado 24
+
+    5 asig: ID EQUAL expr .
+    6 expr: expr . MAS term
+    7     | expr . MENOS term
+
+    MAS    desplazar e ir al estado 17
+    MENOS  desplazar e ir al estado 18
+
+    $default  reduce usando la regla 5 (asig)
+
+
+Estado 25
+
+    4 entrada: asig PYC entrada .
+
+    $default  reduce usando la regla 4 (entrada)
+
+
+Estado 26
+
+    6 expr: expr MAS term .
+    9 term: term . MULT base
+   10     | term . DIV base
+
+    MULT  desplazar e ir al estado 20
+    DIV   desplazar e ir al estado 21
+
+    $default  reduce usando la regla 6 (expr)
+
+
+Estado 27
+
+    7 expr: expr MENOS term .
+    9 term: term . MULT base
+   10     | term . DIV base
+
+    MULT  desplazar e ir al estado 20
+    DIV   desplazar e ir al estado 21
+
+    $default  reduce usando la regla 7 (expr)
+
+
+Estado 28
+
+    2 entrada: expr PYC entrada .
+
+    $default  reduce usando la regla 2 (entrada)
+
+
+Estado 29
+
+    9 term: term MULT base .
+   12 base: base . POTENCIA fact
+
+    POTENCIA  desplazar e ir al estado 22
+
+    $default  reduce usando la regla 9 (term)
+
+
+Estado 30
+
+   10 term: term DIV base .
+   12 base: base . POTENCIA fact
+
+    POTENCIA  desplazar e ir al estado 22
+
+    $default  reduce usando la regla 10 (term)
+
+
+Estado 31
+
+   12 base: base POTENCIA fact .
+
+    $default  reduce usando la regla 12 (base)

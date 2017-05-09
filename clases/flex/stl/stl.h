@@ -1,0 +1,9 @@
+#define SOLID 1
+#define FACET_NORMAL 2
+#define VERTEX 3
+#define OUTER_LOOP 4
+#define ENDLOOP 5
+#define ENDFACET 6
+#define ENDSOLID 7
+#define ID 8
+#define FLOAT 9
