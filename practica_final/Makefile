@@ -11,4 +11,4 @@ run : prueba.mc minic
 	./minic prueba.mc
 
 clean :
-	rm -f minic.tab.* lex.yy.c minic
+	rm -f minic.tab.* minic.output lex.yy.c minic
