@@ -52,7 +52,7 @@ void insertarVar(lista *l, char *nombre, int valor, int type) {
 int consultarVar(lista l, char* nombre) {
 	struct listaRep *aux = buscarNodo(l,nombre);
 	if(aux != NULL) {
-		if (type == 1) {
+		if (aux->type == 1) {
 			return (int)aux->valorFloat;
 		} else {
 			return aux->valor;

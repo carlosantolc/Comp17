@@ -25,6 +25,7 @@ lista lVar;
 %left PLUSOP MINUSOP
 %left MULTOP DIVOP
 %nonassoc UMENOS
+%locations
 %%
 
 program					: 	FUNC ID PARI PARD LLAVEI declarations statement_list LLAVED { printf("program -> func id ( ) {declarations statement_list }\n"); }

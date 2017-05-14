@@ -7,7 +7,7 @@ minic.tab.c minic.tab.h	: minic.y
 lex.yy.c : minic.l minic.tab.h
 	flex --yylineno minic.l
 
-run : prueba.txt minic
+run : prueba.mc minic
 	./minic prueba.mc
 
 clean :
