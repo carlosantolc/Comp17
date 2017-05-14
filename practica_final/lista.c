@@ -4,8 +4,9 @@
 
 struct listaRep {
 	char *nombre;
-	int valor;
 	int type;
+	int valor;
+	float valorFloat;
 	struct listaRep *sig;
 };
 
@@ -27,13 +28,21 @@ struct listaRep * buscarNodo(lista l, char *nombre) {
 void insertarVar(lista *l, char *nombre, int valor, int type) {
 	struct listaRep *aux = buscarNodo(*l,nombre);
 	if(aux != NULL) {
-		aux->valor = valor;
+		if (type == 0) {
+			aux->valor = valor;
+		} else if (type ==1) {
+			aux->valorFloat = valor;
+		}
 	} else {
 		// Nueva variable
 		aux = (struct listaRep *)malloc(sizeof(struct listaRep));
 		aux->nombre = nombre;
-		aux->valor = valor;
 		aux->type = type;
+		if (type == 1) {
+			aux->valorFloat = valor;
+		} else {
+			aux->valor = valor;
+		}
 		aux->sig = *l;
 		*l = aux;
 	}
@@ -43,7 +52,11 @@ void insertarVar(lista *l, char *nombre, int valor, int type) {
 int consultarVar(lista l, char* nombre) {
 	struct listaRep *aux = buscarNodo(l,nombre);
 	if(aux != NULL) {
-		return aux->valor;
+		if (type == 1) {
+			return (int)aux->valorFloat;
+		} else {
+			return aux->valor;
+		}	
 	} else {
 		return 0;
 	}

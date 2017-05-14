@@ -1,62 +1,92 @@
-program					: 	func id ( ) { declarations statement_list }
+%{
+#include <stdio.h>
+#include <math.h>
+#include "lista.h"
+extern int yylex();
+int yyerror(const char* msg);
+extern int yylineno;
+lista lVar;
+%}
+
+%union {
+	int num;
+	float dec;
+	char *str;
+}
+
+%token FUNC VAR LET IF ELSE WHILE PRINT READ STRING PYC COMMA PLUSOP MINUSOP MULTOP DIVOP ASIGN PARI PARD LLAVEI LLAVED BOOL TRUE FALSE FLOAT LESS LESSEQ GREATER GREATEREQ EQ NOTEQ AND OR NOT
+%token<num> NUM
+%token<str> ID
+%token<dec> DECIMAL
+%type<num> program declarations identifier_list asig identifier_list_float asig_float identifier_list_boolean asig_boolean statement_list statement print_list print_item read_list expression_comparacion expression expression_float expression_boolean
+
+/* Precedencias y asociatividad de operadores */
+/* left, right, nonassoc */
+%left PLUSOP MINUSOP
+%left MULTOP DIVOP
+%nonassoc UMENOS
+%%
+
+program					: 	FUNC ID PARI PARD LLAVEI declarations statement_list LLAVED { printf("program -> func id ( ) {declarations statement_list }\n"); }
+						|	/* lambda */ 
 						;
 
-declarations			: 	declarations var identifier_list;
-						|	declarations let identifier_list;
-						| 	declarations float identifier_list_float;
-						|	declarations boolean identifier_list_boolean;
+declarations			: 	declarations VAR identifier_list PYC { printf("declarations -> declarations var identifier_list ;\n"); }
+						|	declarations LET identifier_list PYC { printf("declarations -> declarations let identifier_list ;\n"); }
+						| 	declarations FLOAT identifier_list_float PYC { printf("declarations -> declarations float identifier_list_float ;\n"); }
+						|	declarations BOOL identifier_list_boolean PYC { printf("declarations -> declarations boolean identifier_list_boolean ;\n"); }
 						;
 
-identifier_list 		: 	asig
-						|	identifier_list , asig
+identifier_list 		: 	asig { printf("identifier_list -> asig\n"); }
+						|	identifier_list COMMA asig { printf("identifier_list_float -> identifier_list_boolean , asig_float\n"); }
 						;
 
-asig					:	asig
-						|	id = expression
+asig					:	ID { printf("asig -> ID\n"); }
+						|	ID ASIGN expression { printf("asig -> ID = expression\n"); }
 						;
 
-identifier_list_float	:	asig_float
-						|	identifier_list_float , asig_float
+identifier_list_float	:	asig_float { printf("identifier_list_float -> asig_float\n"); }
+						|	identifier_list_float COMMA asig_float { printf("identifier_list_float -> identifier_list_boolean , asig_float\n"); }
 						;
 
-asig_float				:	id
-						|	id = expression_float
+asig_float				:	ID { printf("asig_float -> ID\n"); }
+						|	ID ASIGN expression_float { printf("asig_float -> ID = expression_float\n"); }
 						;
 
-identifier_list_boolean	:	asig_boolean
-						|	identifier_list_boolean , asig_boolean
+identifier_list_boolean	:	asig_boolean { printf("identifier_list_boolean -> asig_boolean\n"); }
+						|	identifier_list_boolean COMMA asig_boolean { printf("identifier_list_boolean -> identifier_list_boolean , asig_boolean\n"); }
 						;
 
-asig_boolean			:	id
-						|	id = expression_boolean
+asig_boolean			:	ID { printf("asig_boolean -> ID\n"); }
+						|	ID ASIGN expression_boolean { printf("asig_boolean -> ID = expression_boolean\n"); }
 						;
 
-statement_list			:	statement_list statement
-						|	λ
+statement_list			:	statement_list statement { printf("statement_list -> statement_list statement\n"); }
+						|	/* lambda */ { printf("statement_list -> lambda\n"); }
 						;
 
-statement 				:	id = expression ;
-						|	id = expression_float ;
-						|	id = expression_boolean ;
-						|	{ statement_list }
-						|	if ( expression_comparacion ) statement else statement
-						|	if ( expression_comparacion ) statement
-						|	while ( expression_comparacion ) statement
-						|	print print_list ;
-						|	read read_list ;
+statement 				:	ID ASIGN expression PYC { printf("statement -> ID = expression\n"); }
+						|	ID ASIGN expression_float PYC { printf("statement -> ID = expression_float\n"); }
+						|	ID ASIGN expression_boolean PYC { printf("statement -> ID = expression_boolean\n"); }
+						|	LLAVEI statement_list LLAVED { printf("statement -> {statement_list}\n"); }
+						|	IF PARI expression_comparacion PARD statement ELSE statement { printf("statement -> if (expression_comparacion) statement else statement\n"); }
+						|	IF PARI expression_comparacion PARD statement { printf("statement -> if (expression_comparacion) statement\n"); }
+						|	WHILE PARI expression_comparacion PARD statement { printf("statement -> while (expression_comparacion) statement\n"); }
+						|	PRINT print_list PYC { printf("statement -> print print_list\n"); }
+						|	READ read_list PYC { printf("statement -> read read_list\n"); }
 						;
 
-print_list				:	print_item
-						|	print_list , print_item
+print_list				:	print_item { printf("print_list -> print_item\n"); $$ = $1; }
+						|	print_list COMMA print_item { printf("print_list -> print_list , print_item\n"); $$ = $1; }
 						;
 
-print_item				:	expression
-						|	expression_float
-						|	expression_boolean
+print_item				:	expression { printf("print_item -> expression\n"); $$ = $1; }
+						|	expression_float { printf("print_item -> expression_float\n"); $$ = $1; }
+						|	expression_boolean { printf("print_item -> expression_boolean\n"); $$ = $1; }
 						;
 
-read_list				:	id
-						|	read_list , id
+read_list				:	ID { printf("read_list -> ID(%s)\n",$1); $$ = consultarVar(lVar,$1); }
+						|	read_list COMMA ID { printf("read_list -> read_list , ID(%s)\n",$3); $$ = consultarVar(lVar,$3); }
 						;
 
 expression_comparacion	:	expression LESS expression { printf("expr_comp -> expr < expr\n"); }
@@ -101,3 +131,9 @@ expression_boolean		:	TRUE { printf("expr_bool -> true\n"); $$ = 1}
 						|	FALSE { printf("expr_bool -> false\n"); $$ = 0}
 						|	ID { printf("expr_bool -> ID(%s)\n",$1); $$ = consultarVar(lVar,$1); }					
 						;
+
+%%
+/* Rutinas C*/
+int yyerror(const char *msg) {	
+	fprintf(stderr,"%s\n",msg);	
+}
