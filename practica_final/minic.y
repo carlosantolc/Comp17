@@ -18,7 +18,8 @@ lista lVar;
 %token<num> NUM
 %token<str> ID
 %token<dec> DECIMAL
-%type<num> program declarations identifier_list asig identifier_list_float asig_float identifier_list_boolean asig_boolean statement_list statement print_list print_item read_list expression_comparacion expression expression_float expression_boolean
+%type<num> expression_boolean expression_float expression read_list print_item print_list
+//%type<num> expression_boolean expression_float expression expression_comparacion identifier_list_float asig_float identifier_list_boolean asig_boolean statement_list statement print_list print_item read_list asig identifier_list declarations program
 
 /* Precedencias y asociatividad de operadores */
 /* left, right, nonassoc */
@@ -29,13 +30,13 @@ lista lVar;
 %%
 
 program					: 	FUNC ID PARI PARD LLAVEI declarations statement_list LLAVED { printf("program -> func id ( ) {declarations statement_list }\n"); }
-						|	/* lambda */ 
 						;
 
 declarations			: 	declarations VAR identifier_list PYC { printf("declarations -> declarations var identifier_list ;\n"); }
 						|	declarations LET identifier_list PYC { printf("declarations -> declarations let identifier_list ;\n"); }
 						| 	declarations FLOAT identifier_list_float PYC { printf("declarations -> declarations float identifier_list_float ;\n"); }
 						|	declarations BOOL identifier_list_boolean PYC { printf("declarations -> declarations boolean identifier_list_boolean ;\n"); }
+						|	/* lambda */
 						;
 
 identifier_list 		: 	asig { printf("identifier_list -> asig\n"); }
@@ -84,6 +85,7 @@ print_list				:	print_item { printf("print_list -> print_item\n"); $$ = $1; }
 print_item				:	expression { printf("print_item -> expression\n"); $$ = $1; }
 						|	expression_float { printf("print_item -> expression_float\n"); $$ = $1; }
 						|	expression_boolean { printf("print_item -> expression_boolean\n"); $$ = $1; }
+						|   STRING { printf("print_item -> expression_boolean\n"); }
 						;
 
 read_list				:	ID { printf("read_list -> ID(%s)\n",$1); $$ = consultarVar(lVar,$1); }
@@ -104,8 +106,8 @@ expression_comparacion	:	expression LESS expression { printf("expr_comp -> expr 
 						|	expression_float EQ expression_float { printf("expr_comp -> expr_float == expr_float\n"); }
 						|	expression_boolean { printf("expr_comp -> expr_expr_bool\n"); }
 						|	NOT expression_comparacion { printf("expr_comp -> !expr_comp\n"); }
-						|	expression_comparacion AND expression_comparacion { printf("expr_comp -> expr_comp && expr_comp\n"); }
-						|	expression_comparacion OR expression_comparacion { printf("expr_comp -> expr_comp || expr_comp\n"); }
+						|	PARI expression_comparacion PARD AND PARI expression_comparacion PARD { printf("expr_comp -> expr_comp && expr_comp\n"); }
+						|	PARI expression_comparacion PARD OR PARI expression_comparacion PARD { printf("expr_comp -> expr_comp || expr_comp\n"); }
 						;
 
 expression 				:	expression PLUSOP expression { printf("expr -> expr + expr\n"); $$ = $1+$3; }
@@ -128,8 +130,8 @@ expression_float		:	expression_float PLUSOP expression_float { printf("expr_floa
 						|	DECIMAL { printf("expr_float -> DECIMAL = %f\n",$1); $$ = $1; }
 						;
 
-expression_boolean		:	TRUE { printf("expr_bool -> true\n"); $$ = 1}	
-						|	FALSE { printf("expr_bool -> false\n"); $$ = 0}
+expression_boolean		:	TRUE { printf("expr_bool -> true\n"); $$ = 1; }	
+						|	FALSE { printf("expr_bool -> false\n"); $$ = 0; }
 						|	ID { printf("expr_bool -> ID(%s)\n",$1); $$ = consultarVar(lVar,$1); }					
 						;
 
