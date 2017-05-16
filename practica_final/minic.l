@@ -1,7 +1,6 @@
 %{
 #include "minic.tab.h"
 #include <stdio.h>
-#include "minic.h"
 
 int comienzo_comentario;
 %}
@@ -18,7 +17,6 @@ ok			[a-zA-Z_0-9\";,+\-*/=(){}<>! \t\n\r]
 %x orlogico
 
 %%
-
 func								return FUNC;
 var									return VAR;
 let									return LET;
@@ -34,14 +32,14 @@ false								return FALSE;
 ({L}|_)({L}|_|{D})*					{ if (yyleng > 16) {
 										printf("Error: ID con mas de 16 caracteres en línea %d: %s (%lu caracteres)\n",yylineno,yytext,yyleng);
 									} else {
-										yylval.str = strdup(yytext); return ID;
-									} }
+										yylval.str = strdup(yytext);
+									} return ID; }
 {D}+								{ if (atol(yytext) > 2147483648) {
 											printf("Error: NUM provoca desbordamiento en línea %d: %s\n",yylineno,yytext);
 									} else {
-										yylval.num = atoi(yytext); return NUM;
-									} }
-{D}+\.{D}+							{ yylval.dec = strtof(yytext, NULL); return DECIMAL; }
+										yylval.num = atoi(yytext);
+									} return NUM; }
+{D}+\.{D}+							{	yylval.dec = atof(yytext); return DECIMAL; }
 "<="								return LESSEQ;
 ">="								return GREATEREQ;
 "=="								return EQ;
@@ -62,7 +60,7 @@ false								return FALSE;
 "}"									return LLAVED;
 
 \"									{ BEGIN(cadena); yymore(); }
-<cadena>\"							{ BEGIN(INITIAL); return STRING; }
+<cadena>\"							{ BEGIN(INITIAL); yylval.str = strdup(yytext); return STRING; }
 <cadena>[^"\n]+						{ yymore(); }
 <cadena>"\n"						{ printf("Cadena abierta en línea %d sin cerrar\n", yylineno);  BEGIN(INITIAL); }
 <cadena><<EOF>>						{ printf("Cadena abierta al final del documento sin cerrar\n");  return 0; }

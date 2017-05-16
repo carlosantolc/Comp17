@@ -52,13 +52,14 @@ void insertarVar(lista *l, char *nombre, int valor, int type) {
 int consultarVar(lista l, char* nombre) {
 	struct listaRep *aux = buscarNodo(l,nombre);
 	if(aux != NULL) {
-		if (aux->type == 1) {
-			return (int)aux->valorFloat;
+		/*if (aux->type == 1) {
+			return aux->valorFloat;
 		} else {
 			return aux->valor;
-		}	
+		}*/
+		return aux->type;	
 	} else {
-		return 0;
+		return -1;
 	}
 }
 
