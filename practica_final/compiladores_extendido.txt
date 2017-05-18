@@ -2,7 +2,7 @@ program					-> 	func id ( ) { declarations statement_list }
 declarations			-> 	declarations var identifier_list;
 						|	declarations let identifier_list;
 						| 	declarations float identifier_list_float;
-						|	declarations boolean identifier_list_boolean;
+						|	λ
 identifier_list 		-> 	asig
 						|	identifier_list , asig
 asig					->	asig
@@ -10,11 +10,7 @@ asig					->	asig
 identifier_list_float	->	asig_float
 						|	identifier_list_float , asig_float
 asig_float				->	id
-						|	id = expression_float
-identifier_list_boolean	->	asig_boolean
-						|	identifier_list_boolean , asig_boolean
-asig_boolean			->	id
-						|	id = expression_boolean
+						|	id = expression
 statement_list			->	statement_list statement
 						|	λ
 statement 				->	id = expression ;
@@ -29,8 +25,7 @@ statement 				->	id = expression ;
 print_list				->	print_item
 						|	print_list , print_item
 print_item				->	expression
-						|	expression_float
-						|	expression_boolean
+						|	string
 read_list				->	id
 						|	read_list , id
 expression_comparacion	->	expression < expression
@@ -39,16 +34,11 @@ expression_comparacion	->	expression < expression
 						|	expression >= expression
 						|	expression != expression
 						|	expression == expression
-						|	expression_float < expression_float
-						|	expression_float > expression_float
-						|	expression_float <= expression_float
-						|	expression_float >= expression_float
-						|	expression_float != expression_float
-						|	expression_float == expression_float
-						|	expression_boolean
 						|	! expression_comparacion
-						|	expression_comparacion && expression_comparacion
-						|	expression_comparacion || expression_comparacion
+						|	( expression_comparacion ) && ( expression_comparacion )
+						|	( expression_comparacion ) || ( expression_comparacion )
+						|	true
+						|	false
 expression 				->	expression + expression
 						|	expression - expression
 						|	expression * expression
@@ -57,14 +47,4 @@ expression 				->	expression + expression
 						|	( expression )
 						|	id
 						|	num
-expression_float		->	expression_float + expression_float
-						|	expression_float - expression_float
-						|	expression * expression_float
-						|	expression / expression_float
-						|	- expression_float
-						|	( expression_float )
-						|	id
-						|	dec
-expression_boolean		->	id
-						|	true
-						|	false							
+						|	decimal						

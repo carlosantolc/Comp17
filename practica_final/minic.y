@@ -57,7 +57,7 @@ asig					:	ID { printf("asig -> ID\n"); }
 						;
 
 identifier_list_float	:	asig_float { printf("identifier_list_float -> asig_float\n"); }
-						|	identifier_list_float COMMA asig_float { printf("identifier_list_float -> identifier_list_boolean , asig_float\n"); }
+						|	identifier_list_float COMMA asig_float { printf("identifier_list_float -> identifier_list_float , asig_float\n"); }
 						;
 
 asig_float				:	ID { printf("asig_float -> ID\n"); }
@@ -89,41 +89,47 @@ read_list				:	ID { printf("read_list -> ID(%s)\n",$1); }
 						|	read_list COMMA ID { printf("read_list -> read_list , ID(%s)\n",$3); }
 						;
 
-expression_comparacion	:	expression LESS expression { printf("expr_comp(%s) -> expr(%s) < expr(%s)\n",tipos[$$],tipos[$1],tipos[$3]);
+expression_comparacion	:	expression LESS expression { 
 								if ($1 != $3) {
 									$$ = 3;
-								} else { $$ = 2;}}
-						|	expression GREATER expression { printf("expr_comp(%s) -> expr(%s) > expr(%s)\n",tipos[$$],tipos[$1],tipos[$3]);
+								} else { $$ = 2;}
+								printf("expr_comp(%s) -> expr(%s) < expr(%s)\n",tipos[$$],tipos[$1],tipos[$3]); }
+						|	expression GREATER expression { 
 								if ($1 != $3) {
 									$$ = 3;
-								} else { $$ = 2;}}
-						|	expression LESSEQ expression { printf("expr_comp(%s) -> expr(%s) <= expr(%s)\n",tipos[$$],tipos[$1],tipos[$3]);
+								} else { $$ = 2;}
+								printf("expr_comp(%s) -> expr(%s) > expr(%s)\n",tipos[$$],tipos[$1],tipos[$3]); }
+						|	expression LESSEQ expression {
 								if ($1 != $3) {
 									$$ = 3;
-								} else { $$ = 2;}}
-						|	expression GREATEREQ expression { printf("expr_comp(%s) -> expr(%s) >= expr(%s)\n",tipos[$$],tipos[$1],tipos[$3]);
+								} else { $$ = 2;}
+								printf("expr_comp(%s) -> expr(%s) <= expr(%s)\n",tipos[$$],tipos[$1],tipos[$3]); }
+						|	expression GREATEREQ expression {
 								if ($1 != $3) {
 									$$ = 3;
-								} else { $$ = 2;}}
-						|	expression NOTEQ expression { printf("expr_comp(%s) -> expr(%s) != expr(%s)\n",tipos[$$],tipos[$1],tipos[$3]);
+								} else { $$ = 2;}
+								printf("expr_comp(%s) -> expr(%s) >= expr(%s)\n",tipos[$$],tipos[$1],tipos[$3]); }
+						|	expression NOTEQ expression { 
 								if ($1 != $3) {
 									$$ = 3;
-								} else { $$ = 2;}}
-						|	expression EQ expression { printf("expr_comp(%s) -> expr(%s) == expr(%s)\n",tipos[$$],tipos[$1],tipos[$3]);
+								} else { $$ = 2;}
+								printf("expr_comp(%s) -> expr(%s) != expr(%s)\n",tipos[$$],tipos[$1],tipos[$3]); }
+						|	expression EQ expression {
 								if ($1 != $3) {
 									$$ = 3;
-								} else { $$ = 2;}}
+								} else { $$ = 2;}
+								printf("expr_comp(%s) -> expr(%s) == expr(%s)\n",tipos[$$],tipos[$1],tipos[$3]);}
 						|	NOT expression_comparacion { $$ = $2; printf("expr_comp(%s) -> !expr_comp(%s)\n",tipos[$$],tipos[$2]); }
 						|	PARI expression_comparacion PARD AND PARI expression_comparacion PARD {
 								if ($2 != $6) {
 									$$ = 3;
 								} else { $$ = $2; }
-								printf("expr_comp -> expr_comp && expr_comp\n"); }
+								printf("expr_comp(%s) -> (expr_comp(%s)) && (expr_comp(%s))\n",tipos[$$],tipos[$2],tipos[$6]); }
 						|	PARI expression_comparacion PARD OR PARI expression_comparacion PARD {
 								if ($2 != $6) {
 									$$ = 3;
 								} else { $$ = $2; }
-								printf("expr_comp(%s) -> expr_comp(%s) || expr_comp(%s)\n",tipos[$$],tipos[$2],tipos[$6]); }
+								printf("expr_comp(%s) -> (expr_comp(%s)) || (expr_comp(%s))\n",tipos[$$],tipos[$2],tipos[$6]); }
 						|	TRUE  { $$ = 2; printf("expr_comp(%s) -> TRUE\n", tipos[$$]); }
 						|	FALSE { $$ = 2; printf("expr_comp(%s) -> FALSE\n", tipos[$$]); }
 						;
