@@ -36,6 +36,7 @@ char *tipos[5] = {"entero_var","entero_let","float","boolean","error"};
 %nonassoc NOELSE
 %nonassoc ELSE
 %left PARI PARD
+%left AND OR
 %nonassoc NOT
 %locations
 %define parse.error verbose
