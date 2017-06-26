@@ -1,0 +1,29 @@
+Ok. 
+ 
+Análisis sintáctico: 1.25
+ 
+Ok.
+ 
+Análisis semántico: 1
+ 
+- No se insertan los identificador en la lista de variables cuando no tienen expresión de inicialización.
+- Tampoco se introduce la indicación de si han sido declarados como variables (VAR) o constantes (LET).
+- En las sentencias de asignación, no se comprueba si el identificador ha sido declarado y es variable.
+- En las sentencias de read, no se comprueba si el identificador ha sido declarado y es variable.
+- En las expresiones no se comprueba si el identificador ha sido declarado.
+ 
+Documentación: 0.5
+ 
+Ok.
+ 
+AMPLIACIONES 
+ 
+Sólo cuentan si está aprobada la parte obligatoria de las prácticas.
+ 
+Análisis léxico: 0.5
+ 
+Tratamiento de errores léxicos como cadena no cerrada al final de línea, comentario no cerrado a final de fichero, operador lógico & o | incorrecto.
+ 
+Análisis sintáctico: 1
+ 
+Operadores de comparación y lógicos. Lo ideal hubiese sido que los operadores AND y OR no requiriesen paréntesis. Habría que definir la precedencia y asociatividad de los dos operadores.

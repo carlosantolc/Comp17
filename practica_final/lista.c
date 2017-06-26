@@ -30,7 +30,7 @@ void insertarVar(lista *l, char *nombre, int valor, int type) {
 	if(aux != NULL) {
 		if (type == 0) {
 			aux->valor = valor;
-		} else if (type ==1) {
+		} else if (type == 2) {
 			aux->valorFloat = valor;
 		}
 	} else {
@@ -38,7 +38,7 @@ void insertarVar(lista *l, char *nombre, int valor, int type) {
 		aux = (struct listaRep *)malloc(sizeof(struct listaRep));
 		aux->nombre = nombre;
 		aux->type = type;
-		if (type == 1) {
+		if (type == 2) {
 			aux->valorFloat = valor;
 		} else {
 			aux->valor = valor;
@@ -52,11 +52,6 @@ void insertarVar(lista *l, char *nombre, int valor, int type) {
 int consultarVar(lista l, char* nombre) {
 	struct listaRep *aux = buscarNodo(l,nombre);
 	if(aux != NULL) {
-		/*if (aux->type == 1) {
-			return aux->valorFloat;
-		} else {
-			return aux->valor;
-		}*/
 		return aux->type;	
 	} else {
 		return -1;
