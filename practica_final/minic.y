@@ -105,9 +105,9 @@ print_item				:	expression { printf("print_item -> expression(%s)\n",tipos[$1]);
 
 read_list				:	ID {
 								if (consultarVar(lVar,$1) == -1) {
-									printf("read_list -> ID(%s) | ERROR -> ID NO DECLARADO\n",$1);
+									printf("read_list -> ID(%s) | ERROR -> ID NO DECLARADO EN LINEA %d\n",$1,yylineno);
 								} else if (consultarVar(lVar,$1) == 1) {
-									printf("read_list -> ID(%s) | ERROR -> ID NO VARIABLE\n",$1);
+									printf("read_list -> ID(%s) | ERROR -> ID NO VARIABLE EN LINEA %d\n",$1,yylineno);
 								} else {
 									printf("read_list -> ID(%s)\n",$1); }
 								}

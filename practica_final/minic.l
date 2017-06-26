@@ -8,7 +8,8 @@ int comienzo_comentario;
 L			[a-zA-Z]
 D			[0-9]
 panico		[^a-zA-Z_0-9\";,+\-*/=(){}<>!&| \t\n\r]
-ok			[a-zA-Z_0-9\";,+\-*/=(){}<>! \t\n\r]
+okand		[a-zA-Z_0-9\";,+\-*/=(){}<>!| \t\n\r]
+okor		[a-zA-Z_0-9\";,+\-*/=(){}<>!& \t\n\r]
 
 %x comentario
 %x comentario_multilinea
@@ -67,12 +68,12 @@ false								return FALSE;
 
 "&"									{ BEGIN(andlogico); yymore(); }
 <andlogico>"&"						{ BEGIN(INITIAL); return AND; }
-<andlogico>{ok}+					{ BEGIN(INITIAL); printf("Error léxico (línea %d): &\n",yylineno); yyless(1); }
+<andlogico>{okand}+					{ BEGIN(INITIAL); printf("Error léxico (línea %d): &\n",yylineno); yyless(1); }
 
 
 "|"									{ BEGIN(orlogico); yymore(); }
 <orlogico>"|"						{ BEGIN(INITIAL); return OR; }
-<orlogico>{ok}+						{ BEGIN(INITIAL); printf("Error léxico (línea %d): |\n",yylineno); yyless(1); }
+<orlogico>{okor}+						{ BEGIN(INITIAL); printf("Error léxico (línea %d): |\n",yylineno); yyless(1); }
 
 "//"								{ BEGIN(comentario); }
 <comentario>"\n"					{ BEGIN(INITIAL); }
