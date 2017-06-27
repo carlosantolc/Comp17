@@ -35,7 +35,6 @@ char *tipos[5] = {"entero_var","entero_let","float","boolean","error"};
 %nonassoc UMENOS
 %nonassoc NOELSE
 %nonassoc ELSE
-%left PARI PARD
 %left AND OR
 %nonassoc NOT
 %locations
@@ -45,26 +44,26 @@ char *tipos[5] = {"entero_var","entero_let","float","boolean","error"};
 program					: 	FUNC ID PARI PARD LLAVEI declarations statement_list LLAVED { printf("program -> func id ( ) {declarations statement_list }\n"); }
 						;
 
-declarations			: 	declarations VAR identifier_list_var PYC { printf("declarations -> declarations var identifier_list ;\n"); }
-						|	declarations LET identifier_list_let PYC { printf("declarations -> declarations let identifier_list ;\n"); }
+declarations			:	declarations VAR identifier_list_var PYC { printf("declarations -> declarations var identifier_list_var ;\n"); }
+						|	declarations LET identifier_list_let PYC { printf("declarations -> declarations let identifier_list_let ;\n"); }
 						| 	declarations FLOAT identifier_list_float PYC { printf("declarations -> declarations float identifier_list_float ;\n"); }
 						|	/* lambda */
 						;
 
-identifier_list_var		: 	asig_var { printf("identifier_list -> asig\n"); }
-						|	identifier_list_var COMMA asig_var { printf("identifier_list_float -> identifier_list_boolean , asig_float\n"); }
+identifier_list_var		: 	asig_var { printf("identifier_list_var -> asig\n"); }
+						|	identifier_list_var COMMA asig_var { printf("identifier_list_var -> identifier_list_boolean , asig_float\n"); }
 						;
 
-asig_var				:	ID { printf("asig -> ID\n"); insertarVar(&lVar,$1,0,0); }
-						|	ID ASIGN expression { printf("asig -> ID = expression(%s)\n",tipos[0]); insertarVar(&lVar,$1,$3,0); }
+asig_var				:	ID { printf("asig_var -> ID\n"); insertarVar(&lVar,$1,0,0); }
+						|	ID ASIGN expression { printf("asig_var -> ID = expression(%s)\n",tipos[0]); insertarVar(&lVar,$1,$3,0); }
 						;
 
-identifier_list_let		: 	asig_let { printf("identifier_list -> asig\n"); }
-						|	identifier_list_let COMMA asig_let { printf("identifier_list_float -> identifier_list_boolean , asig_float\n"); }
+identifier_list_let		: 	asig_let { printf("identifier_list_let -> asig\n"); }
+						|	identifier_list_let COMMA asig_let { printf("identifier_list_let -> identifier_list_boolean , asig_float\n"); }
 						;
 
-asig_let				:	ID { printf("asig -> ID\n"); insertarVar(&lVar,$1,0,1); }
-						|	ID ASIGN expression { printf("asig -> ID = expression(%s)\n",tipos[0]); insertarVar(&lVar,$1,$3,1); }
+asig_let				:	ID { printf("asig_let -> ID\n"); insertarVar(&lVar,$1,0,1); }
+						|	ID ASIGN expression { printf("asig_let -> ID = expression(%s)\n",tipos[0]); insertarVar(&lVar,$1,$3,1); }
 						;
 
 identifier_list_float	:	asig_float { printf("identifier_list_float -> asig_float\n"); }
@@ -81,9 +80,9 @@ statement_list			:	statement_list statement { printf("statement_list -> statemen
 
 statement 				:	ID ASIGN expression PYC {
 								if (consultarVar(lVar,$1) == -1) {
-									printf("statement -> ID(%s) = expression | ERROR -> ID NO DECLARADO\n",$1);
+									printf("statement -> ID(%s) = expression | ERROR -> ID NO DECLARADO EN LINEA %d\n",$1,yylineno);
 								} else if (consultarVar(lVar,$1) == 1) {
-									printf("statement -> ID(%s) = expression | ERROR -> ID NO VARIABLE\n",$1);
+									printf("statement -> ID(%s) = expression | ERROR -> ID NO VARIABLE EN LINEA %d\n",$1,yylineno);
 								} else {
 									printf("statement -> ID(%s) = expression\n",$1); }
 								}
@@ -111,7 +110,14 @@ read_list				:	ID {
 								} else {
 									printf("read_list -> ID(%s)\n",$1); }
 								}
-						|	read_list COMMA ID { printf("read_list -> read_list , ID(%s)\n",$3); }
+						|	read_list COMMA ID {
+								if (consultarVar(lVar,$3) == -1) {
+									printf("read_list -> read_list , ID(%s) | ERROR -> ID NO DECLARADO EN LINEA %d\n",$3,yylineno);
+								} else if (consultarVar(lVar,$3) == 1) {
+									printf("read_list -> read_list , ID(%s) | ERROR -> ID NO VARIABLE EN LINEA %d\n",$3,yylineno);
+								} else {
+									printf("read_list -> read_list , ID(%s)\n",$3); }
+								}
 						;
 
 expression_comparacion	:	expression LESS expression { 
@@ -186,7 +192,7 @@ expression 				:	expression PLUSOP expression {
 								$$ = consultarVar(lVar,$1);
 								if ($$ == -1) {
 									$$ = 4;
-									printf("expr(%s) -> ID(%s) ERROR -> ID NO DECLARADO\n",tipos[$$],$1);
+									printf("expr(%s) -> ID(%s) | ERROR -> ID NO DECLARADO EN LINEA %d\n",tipos[$$],$1,yylineno);
 								} else {
 									printf("expr(%s) -> ID(%s)\n",tipos[$$],$1); }
 								}
