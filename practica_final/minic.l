@@ -16,6 +16,7 @@ okor		[a-zA-Z_0-9\";,+\-*/=(){}<>!& \t\n\r]
 %x cadena
 %x andlogico
 %x orlogico
+%x aux
 
 %%
 func								return FUNC;
@@ -63,8 +64,10 @@ false								return FALSE;
 \"									{ BEGIN(cadena); yymore(); }
 <cadena>\"							{ BEGIN(INITIAL); yylval.str = strdup(yytext); return STRING; }
 <cadena>[^"\n]+						{ yymore(); }
-<cadena>"\n"						{ printf("Cadena abierta en línea %d sin cerrar\n", yylineno);  BEGIN(INITIAL); }
-<cadena><<EOF>>						{ printf("Cadena abierta al final del documento sin cerrar\n");  return 0; }
+<cadena>"\n"						{ BEGIN(aux); }
+
+<aux>.								{ BEGIN(INITIAL); printf("Cadena abierta en línea %d sin cerrar\n", yylineno); yyless(0); }
+<aux><<EOF>>						{ printf("Cadena abierta al final del documento sin cerrar\n");  return 0; }
 
 "&"									{ BEGIN(andlogico); yymore(); }
 <andlogico>"&"						{ BEGIN(INITIAL); return AND; }
@@ -73,7 +76,7 @@ false								return FALSE;
 
 "|"									{ BEGIN(orlogico); yymore(); }
 <orlogico>"|"						{ BEGIN(INITIAL); return OR; }
-<orlogico>{okor}+						{ BEGIN(INITIAL); printf("Error léxico (línea %d): |\n",yylineno); yyless(1); }
+<orlogico>{okor}+					{ BEGIN(INITIAL); printf("Error léxico (línea %d): |\n",yylineno); yyless(1); }
 
 "//"								{ BEGIN(comentario); }
 <comentario>"\n"					{ BEGIN(INITIAL); }
@@ -82,7 +85,7 @@ false								return FALSE;
 "/*"										{ BEGIN(comentario_multilinea); comienzo_comentario = yylineno; yymore(); }
 <comentario_multilinea>([^*]|[*]^+[^*/])*	{ yymore(); }
 <comentario_multilinea>"*/"					{ BEGIN(INITIAL); }
-<comentario_multilinea><<EOF>>				{ printf("Comentario abierto en línea %d sin cerrar\n", comienzo_comentario); return 0; }
+<comentario_multilinea><<EOF>>				{ printf("Comentario no cerrado a final de fichero\n"); return 0; }
 
 [ \t\n\r]+							{ /* Ignorar espacios en blanco, tabuladores y otros delimitadores */ }
 {panico}+							{ /* Error léxico */ printf("Error léxico (línea %d): %s\n",yylineno,yytext); }

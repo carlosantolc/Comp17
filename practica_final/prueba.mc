@@ -9,7 +9,7 @@ b=1;
 read g;
 read b;
 print "Inicio del programa\n";
-if ((a >= b) || (!false)) print "a","\n";
+if ((a >= b) || (!false |& )) print "a","\n";
 	else if (b < 2) print "No a y b\n";
 		else while ((c != 0) && (c <= 100))
 			{
@@ -21,4 +21,6 @@ if ((a >= b) || (!false)) print "a","\n";
 				c = c-2+1;
 			}
 print "Final","\n";
+"cadena no cerrada al final de linea
 }
+"cadena no cerrada al final de fichero
